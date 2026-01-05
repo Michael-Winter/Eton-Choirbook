@@ -7,6 +7,6 @@ Please do get in touch if you spot any errors or would like a tranposition of an
 
 m.winter@ncl.ac.uk
 
-Notebook (HTML): https://michael-winter.github.io/Eton-Choirbook/
+Notebook (HTML): https://michael-winter.github.io/Eton-Choirbook/eton-recon-aid-for-appendixC.html
 
 Notebook (ipynb): link to the .ipynb in the repo
