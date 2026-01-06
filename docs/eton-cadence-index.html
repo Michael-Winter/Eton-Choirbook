@@ -98,6 +98,8 @@
         <th>Tone</th>
         <th>Texture</th>
         <th>Meter</th>
+        <th>CVFs</th>
+        <th>Cantizans</th>
         <th>Notes</th>
       </tr>
     </thead>
@@ -105,7 +107,7 @@
   </table>
 
   <p class="hint">
-    Images are loaded from <code>docs/images/</code> using the <code>ImageFile</code> field in <code>cadences.json</code>.
+    Images load from <code>docs/images/</code> using the <code>ImageFile</code> field in <code>cadences.json</code>.
   </p>
 
   <!-- Modal -->
@@ -151,8 +153,6 @@ function buildNotes(row) {
     const v = (row[k] ?? "").toString().trim().toUpperCase();
     if (v === "Y") out.push(label);
   });
-  if ((row["CVFs"] ?? "").toString().trim()) out.push(`CVFs: ${row["CVFs"]}`);
-  if ((row["Cantizans"] ?? "").toString().trim()) out.push(`Cantizans: ${row["Cantizans"]}`);
   return out.join("; ");
 }
 
@@ -160,9 +160,6 @@ function uniqSorted(arr) {
   return Array.from(new Set(arr.filter(x => x !== undefined && x !== null && String(x).trim() !== "")))
     .sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric:true, sensitivity:"base"}));
 }
-
-let table;
-let allRows = [];
 
 function populateSelect(selId, values) {
   const sel = document.getElementById(selId);
@@ -179,6 +176,9 @@ function escapeHtml(s) {
     .replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
 
+let table;
+let allRows = [];
+
 function rowToTableRow(r) {
   return {
     e: r["E Number"],
@@ -190,6 +190,8 @@ function rowToTableRow(r) {
     tone: r["Tone"] || "",
     tex: r["Full or reduced texture"] || "",
     meter: r["Triple or Duple"] || "",
+    cvfs: escapeHtml(r["CVFs"] ?? ""),
+    cantizans: escapeHtml(r["Cantizans"] ?? ""),
     notes: escapeHtml(buildNotes(r))
   };
 }
@@ -254,22 +256,23 @@ function openModal(row) {
   const img = document.getElementById("m_img");
   const imgFile = imageFileStrategy(row);
 
+  // Hide the filename/path in the UI; only show if missing / error.
+  const note = document.getElementById("m_note");
+
   if (!imgFile) {
     img.removeAttribute("src");
-    document.getElementById("m_note").textContent =
-      "No image filename is attached for this entry (often because bar/beat is a range or the image is not present).";
+    note.textContent = "No image available for this entry.";
     modal.classList.add("open");
     return;
   }
 
   const imgPath = imagesFolder + imgFile;
   img.src = imgPath;
-  document.getElementById("m_note").textContent = `Image: ${imgPath}`;
+  note.textContent = ""; // <-- no filepath shown when all is well
 
   img.onerror = () => {
     img.removeAttribute("src");
-    document.getElementById("m_note").textContent =
-      `Could not load ${imgPath}. Check that the file exists in docs/images and that ImageFile matches exactly.`;
+    note.textContent = "Could not load the image for this entry.";
   };
 
   modal.classList.add("open");
@@ -302,6 +305,8 @@ async function init() {
       { data: "tone" },
       { data: "tex" },
       { data: "meter" },
+      { data: "cvfs" },
+      { data: "cantizans" },
       { data: "notes" },
     ],
     pageLength: 25,
