@@ -14,12 +14,16 @@
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 18px; }
     h1 { margin: 0 0 6px 0; font-size: 22px; }
     .sub { color: #444; margin: 0 0 16px 0; }
-    .controls { display: grid; grid-template-columns: repeat(6, minmax(140px, 1fr)); gap: 10px; margin: 12px 0 14px; }
+
+    .controls { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: 10px; margin: 12px 0 14px; }
     .controls label { font-size: 12px; color: #333; display: block; margin-bottom: 4px; }
-    .controls select, .controls input { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 8px; background: #fff; }
-    .hint { font-size: 12px; color: #555; margin: 8px 0 0; }
+    .controls select, .controls input, .controls button { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 8px; background: #fff; }
+    .controls button { background:#f8f8f8; cursor:pointer; }
+    .hint { font-size: 12px; color: #555; margin: 10px 0 0; }
+
     .pill { display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #ddd; font-size:12px; margin-right:6px; }
     .rowlink { color: #0b57d0; cursor: pointer; text-decoration: underline; }
+
     /* Modal */
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,.65); display: none; align-items: center; justify-content: center; padding: 18px; }
     .modal.open { display: flex; }
@@ -33,13 +37,16 @@
     .imgwrap img { max-width: 100%; height: auto; display:block; }
     .img-note { font-size: 12px; color:#666; margin-top: 10px; }
     .small { font-size: 12px; color: #666; }
-    @media (max-width: 900px) { .controls { grid-template-columns: repeat(2, minmax(140px, 1fr)); } }
+
+    @media (max-width: 900px) { .controls { grid-template-columns: repeat(2, minmax(160px, 1fr)); } }
   </style>
 </head>
+
 <body>
   <h1>Eton Cadence Thesaurus</h1>
-  <p class="sub">Filter, sort, and click a cadence to view its notated exemplar (PNG) where available.</p>
+  <p class="sub">Filter, sort, and click a cadence to view its notated exemplar where available.</p>
 
+  <!-- Facet filters (dropdowns) -->
   <div class="controls">
     <div>
       <label for="f_e">E Number</label>
@@ -57,6 +64,7 @@
       <label for="f_tone">Tone</label>
       <select id="f_tone"><option value="">All</option></select>
     </div>
+
     <div>
       <label for="f_tex">Texture</label>
       <select id="f_tex"><option value="">All</option></select>
@@ -65,9 +73,18 @@
       <label for="f_meter">Triple/Duple</label>
       <select id="f_meter"><option value="">All</option></select>
     </div>
+    <div>
+      <label for="f_cvfs">CVFs</label>
+      <select id="f_cvfs"><option value="">All</option></select>
+    </div>
+    <div>
+      <label for="f_cant">Cantizans</label>
+      <select id="f_cant"><option value="">All</option></select>
+    </div>
   </div>
 
-  <div class="controls" style="grid-template-columns: repeat(4, minmax(140px, 1fr));">
+  <!-- Text filters -->
+  <div class="controls">
     <div>
       <label for="f_flags">Flags contains</label>
       <input id="f_flags" placeholder="e.g., Enjambment, gymell, Hangover" />
@@ -82,7 +99,7 @@
     </div>
     <div>
       <label>&nbsp;</label>
-      <button id="clear" style="width:100%; padding:8px 10px; border-radius: 10px; border:1px solid #ccc; background:#f8f8f8; cursor:pointer;">Clear filters</button>
+      <button id="clear">Clear filters</button>
     </div>
   </div>
 
@@ -133,7 +150,6 @@
 <script>
 const imagesFolder = "images/";
 
-// Uses the ImageFile field written into cadences.json by your script.
 function imageFileStrategy(row) {
   return (row.ImageFile || "").toString().trim();
 }
@@ -172,8 +188,12 @@ function populateSelect(selId, values) {
 }
 
 function escapeHtml(s) {
-  return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
 let table;
@@ -203,6 +223,9 @@ function applyFilters() {
   const tone = $("#f_tone").val();
   const tex = $("#f_tex").val();
   const meter = $("#f_meter").val();
+  const cvfs = $("#f_cvfs").val();
+  const cant = $("#f_cant").val();
+
   const flags = ($("#f_flags").val() || "").toLowerCase().trim();
   const title = ($("#f_title").val() || "").toLowerCase().trim();
   const bar = ($("#f_bar").val() || "").trim();
@@ -214,6 +237,9 @@ function applyFilters() {
     if (tone && String(r["Tone"]) !== tone) return false;
     if (tex && String(r["Full or reduced texture"]) !== tex) return false;
     if (meter && String(r["Triple or Duple"]) !== meter) return false;
+
+    if (cvfs && String(r["CVFs"] ?? "") !== cvfs) return false;
+    if (cant && String(r["Cantizans"] ?? "") !== cant) return false;
 
     if (title && !String(r["Title"] || "").toLowerCase().includes(title)) return false;
     if (bar && String(r["Bar"] || "") !== bar) return false;
@@ -254,10 +280,8 @@ function openModal(row) {
   });
 
   const img = document.getElementById("m_img");
-  const imgFile = imageFileStrategy(row);
-
-  // Hide the filename/path in the UI; only show if missing / error.
   const note = document.getElementById("m_note");
+  const imgFile = imageFileStrategy(row);
 
   if (!imgFile) {
     img.removeAttribute("src");
@@ -268,7 +292,7 @@ function openModal(row) {
 
   const imgPath = imagesFolder + imgFile;
   img.src = imgPath;
-  note.textContent = ""; // <-- no filepath shown when all is well
+  note.textContent = ""; // hide file/path when everything is fine
 
   img.onerror = () => {
     img.removeAttribute("src");
@@ -292,6 +316,8 @@ async function init() {
   populateSelect("f_tone", allRows.map(r => r["Tone"]));
   populateSelect("f_tex", allRows.map(r => r["Full or reduced texture"]));
   populateSelect("f_meter", allRows.map(r => r["Triple or Duple"]));
+  populateSelect("f_cvfs", allRows.map(r => r["CVFs"]));
+  populateSelect("f_cant", allRows.map(r => r["Cantizans"]));
 
   table = new DataTable("#tbl", {
     data: allRows.map(rowToTableRow),
@@ -313,21 +339,24 @@ async function init() {
     order: [[0,"asc"], [3,"asc"], [4,"asc"]],
   });
 
-  ["#f_e","#f_comp","#f_type","#f_tone","#f_tex","#f_meter"].forEach(id => $(id).on("change", applyFilters));
+  // Wire filters
+  ["#f_e","#f_comp","#f_type","#f_tone","#f_tex","#f_meter","#f_cvfs","#f_cant"].forEach(id => $(id).on("change", applyFilters));
   ["#f_flags","#f_title","#f_bar"].forEach(id => $(id).on("input", applyFilters));
 
   document.getElementById("clear").addEventListener("click", () => {
-    $("#f_e,#f_comp,#f_type,#f_tone,#f_tex,#f_meter").val("");
+    $("#f_e,#f_comp,#f_type,#f_tone,#f_tex,#f_meter,#f_cvfs,#f_cant").val("");
     $("#f_flags,#f_title,#f_bar").val("");
     applyFilters();
   });
 
+  // Click handler
   $("#tbl tbody").on("click", "span.rowlink", function() {
     const id = parseInt($(this).attr("data-id"), 10);
     const row = allRows.find(r => r._id === id);
     if (row) openModal(row);
   });
 
+  // Modal close
   document.getElementById("m_close").addEventListener("click", closeModal);
   document.getElementById("modal").addEventListener("click", (e) => {
     if (e.target.id === "modal") closeModal();
