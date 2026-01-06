@@ -33,8 +33,23 @@
     .modal-close { border: 0; background: #f2f2f2; border-radius: 10px; padding: 8px 10px; cursor: pointer; }
     .modal-body { padding: 14px; }
     .meta { display:flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px 0; }
-    .imgwrap { display:flex; align-items:center; justify-content:center; background:#fafafa; border:1px solid #eee; border-radius: 12px; overflow:hidden; }
-    .imgwrap img { max-width: 100%; height: auto; display:block; }
+    .imgwrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fafafa;
+  border:1px solid #eee;
+  border-radius:12px;
+  overflow:auto;          /* allows scroll if needed */
+  max-height: 75vh;       /* key: prevents it exceeding the screen */
+}
+    .imgwrap img{
+  display:block;
+  max-width: 100%;
+  height: auto;
+  max-height: 75vh;       /* key: fit within viewport */
+  object-fit: contain;    /* never crop */
+}
     .img-note { font-size: 12px; color:#666; margin-top: 10px; }
     .small { font-size: 12px; color: #666; }
 
