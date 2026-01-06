@@ -14,7 +14,7 @@ OUT_JSON = Path("docs/cadences.json")
 # e2_kellyk_gaude_flore_virginali_4_2.jpg
 # → E2, bar 4, beat 2
 IMAGE_RE = re.compile(
-    r"^e(\d+)_.*_(\d+)_(\d+)\.(jpg|jpeg)$",
+    r"^e(\d+)_.*_(\d+)_(\d+)\.(jpg|jpeg|png)$",
     re.IGNORECASE
 )
 
