@@ -1,1 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eton Cadence Thesaurus</title>
 
+  <!-- DataTables (sorting/filtering/paging) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables.net-dt@2.1.8/css/dataTables.dataTables.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/datatables.net@2.1.8/js/dataTables.min.js"></script>
+
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 18px; }
+    h1 { margin: 0 0 6px 0; font-size: 22px; }
+    .sub { color: #444; margin: 0 0 16px 0; }
+    .controls { display: grid; grid-template-columns: repeat(6, minmax(140px, 1fr)); gap: 10px; margin: 12px 0 14px; }
+    .controls label { font-size: 12px; color: #333; display: block; margin-bottom: 4px; }
+    .controls select, .controls input { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 8px; background: #fff; }
+    .hint { font-size: 12px; color: #555; margin: 8px 0 0; }
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #ddd; font-size:12px; margin-right:6px; }
+    .rowlink { color: #0b57d0; cursor: pointer; text-decoration: underline; }
+    /* Modal */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,.65); display: none; align-items: center; justify-content: center; padding: 18px; }
+    .modal.open { display: flex; }
+    .modal-card { background: #fff; border-radius: 14px; max-width: 1100px; width: 100%; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+    .modal-head { display:flex; justify-content: space-between; align-items:center; padding: 12px 14px; border-bottom: 1px solid #eee; }
+    .modal-title { font-weight: 650; }
+    .modal-close { border: 0; background: #f2f2f2; border-radius: 10px; padding: 8px 10px; cursor: pointer; }
+    .modal-body { padding: 14px; }
+    .meta { display:flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px 0; }
+    .imgwrap { display:flex; align-items:center; justify-content:center; background:#fafafa; border:1px solid #eee; border-radius: 12px; overflow:hidden; }
+    .imgwrap img { max-width: 100%; height: auto; display:block; }
+    .img-note { font-size: 12px; color:#666; margin-top: 10px; }
+    .small { font-size: 12px; color: #666; }
+    @media (max-width: 900px) { .controls { grid-template-columns: repeat(2, minmax(140px, 1fr)); } }
+  </style>
+</head>
+<body>
+  <h1>Eton Cadence Thesaurus</h1>
+  <p class="sub">Filter, sort, and click a cadence to view its notated exemplar (PNG) where available.</p>
+
+  <div class="controls">
+    <div>
+      <label for="f_e">E Number</label>
+      <select id="f_e"><option value="">All</option></select>
+    </div>
+    <div>
+      <label for="f_comp">Composer</label>
+      <select id="f_comp"><option value="">All</option></select>
+    </div>
+    <div>
+      <label for="f_type">Cadence type</label>
+      <select id="f_type"><option value="">All</option></select>
+    </div>
+    <div>
+      <label for="f_tone">Tone</label>
+      <select id="f_tone"><option value="">All</option></select>
+    </div>
+    <div>
+      <label for="f_tex">Texture</label>
+      <select id="f_tex"><option value="">All</option></select>
+    </div>
+    <div>
+      <label for="f_meter">Triple/Duple</label>
+      <select id="f_meter"><option value="">All</option></select>
+    </div>
+  </div>
+
+  <div class="controls" style="grid-template-columns: repeat(4, minmax(140px, 1fr));">
+    <div>
+      <label for="f_flags">Flags contains</label>
+      <input id="f_flags" placeholder="e.g., Enjambment, gymell, Hangover" />
+    </div>
+    <div>
+      <label for="f_title">Title contains</label>
+      <input id="f_title" placeholder="e.g., gaude flore" />
+    </div>
+    <div>
+      <label for="f_bar">Bar</label>
+      <input id="f_bar" placeholder="e.g., 125" />
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <button id="clear" style="width:100%; padding:8px 10px; border-radius: 10px; border:1px solid #ccc; background:#f8f8f8; cursor:pointer;">Clear filters</button>
+    </div>
+  </div>
+
+  <table id="tbl" class="display" style="width:100%">
+    <thead>
+      <tr>
+        <th>E</th>
+        <th>Title</th>
+        <th>Composer</th>
+        <th>Bar</th>
+        <th>Beat</th>
+        <th>CadType</th>
+        <th>Tone</th>
+        <th>Texture</th>
+        <th>Meter</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <p class="hint">
+    Images are loaded from <code>docs/images/</code> using the <code>ImageFile</code> field in <code>cadences.json</code>.
+  </p>
+
+  <!-- Modal -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-label="Cadence image">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <div class="modal-title" id="m_title">Cadence</div>
+          <div class="small" id="m_sub"></div>
+        </div>
+        <button class="modal-close" id="m_close">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="meta" id="m_meta"></div>
+        <div class="imgwrap">
+          <img id="m_img" alt="Cadence image (if available)" />
+        </div>
+        <div class="img-note" id="m_note"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const imagesFolder = "images/";
+
+// Uses the ImageFile field written into cadences.json by your script.
+function imageFileStrategy(row) {
+  return (row.ImageFile || "").toString().trim();
+}
+
+function buildNotes(row) {
+  const flags = [
+    ["Enjambment?", "Enjambment"],
+    ["Section end?", "Section end"],
+    ["Major Section End", "Major section end"],
+    ["Hangover?", "Hangover"],
+    ["Triplets?", "Triplets"],
+    ["Eton 6th?", "Eton 6th"],
+    ["gymell", "Gymell"],
+  ];
+  const out = [];
+  flags.forEach(([k, label]) => {
+    const v = (row[k] ?? "").toString().trim().toUpperCase();
+    if (v === "Y") out.push(label);
+  });
+  if ((row["CVFs"] ?? "").toString().trim()) out.push(`CVFs: ${row["CVFs"]}`);
+  if ((row["Cantizans"] ?? "").toString().trim()) out.push(`Cantizans: ${row["Cantizans"]}`);
+  return out.join("; ");
+}
+
+function uniqSorted(arr) {
+  return Array.from(new Set(arr.filter(x => x !== undefined && x !== null && String(x).trim() !== "")))
+    .sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric:true, sensitivity:"base"}));
+}
+
+let table;
+let allRows = [];
+
+function populateSelect(selId, values) {
+  const sel = document.getElementById(selId);
+  uniqSorted(values).forEach(v => {
+    const opt = document.createElement("option");
+    opt.value = String(v);
+    opt.textContent = String(v);
+    sel.appendChild(opt);
+  });
+}
+
+function escapeHtml(s) {
+  return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+
+function rowToTableRow(r) {
+  return {
+    e: r["E Number"],
+    title: `<span class="rowlink" data-id="${r._id}">${escapeHtml(r["Title"] || "")}</span>`,
+    comp: r["Composer"] || "",
+    bar: r["Bar"] ?? "",
+    beat: r["Beat"] ?? "",
+    type: r["CadType"] || "",
+    tone: r["Tone"] || "",
+    tex: r["Full or reduced texture"] || "",
+    meter: r["Triple or Duple"] || "",
+    notes: escapeHtml(buildNotes(r))
+  };
+}
+
+function applyFilters() {
+  const e = $("#f_e").val();
+  const comp = $("#f_comp").val();
+  const type = $("#f_type").val();
+  const tone = $("#f_tone").val();
+  const tex = $("#f_tex").val();
+  const meter = $("#f_meter").val();
+  const flags = ($("#f_flags").val() || "").toLowerCase().trim();
+  const title = ($("#f_title").val() || "").toLowerCase().trim();
+  const bar = ($("#f_bar").val() || "").trim();
+
+  const filtered = allRows.filter(r => {
+    if (e && String(r["E Number"]) !== e) return false;
+    if (comp && String(r["Composer"]) !== comp) return false;
+    if (type && String(r["CadType"]) !== type) return false;
+    if (tone && String(r["Tone"]) !== tone) return false;
+    if (tex && String(r["Full or reduced texture"]) !== tex) return false;
+    if (meter && String(r["Triple or Duple"]) !== meter) return false;
+
+    if (title && !String(r["Title"] || "").toLowerCase().includes(title)) return false;
+    if (bar && String(r["Bar"] || "") !== bar) return false;
+
+    if (flags) {
+      const n = buildNotes(r).toLowerCase();
+      if (!n.includes(flags)) return false;
+    }
+    return true;
+  });
+
+  table.clear();
+  table.rows.add(filtered.map(rowToTableRow));
+  table.draw();
+}
+
+function openModal(row) {
+  const modal = document.getElementById("modal");
+  document.getElementById("m_title").textContent = `${row["E Number"]} — bar ${row["Bar"]}, beat ${row["Beat"]}`;
+  document.getElementById("m_sub").textContent = `${row["Title"]} (${row["Composer"]}) — ${row["CadType"]}, tone ${row["Tone"]}`;
+
+  const meta = document.getElementById("m_meta");
+  meta.innerHTML = "";
+  const metaItems = [
+    ["CadType", row["CadType"]],
+    ["Tone", row["Tone"]],
+    ["Texture", row["Full or reduced texture"]],
+    ["Meter", row["Triple or Duple"]],
+    ["CVFs", row["CVFs"]],
+    ["Cantizans", row["Cantizans"]],
+  ];
+  metaItems.forEach(([k,v]) => {
+    if (v === undefined || v === null || String(v).trim() === "") return;
+    const span = document.createElement("span");
+    span.className = "pill";
+    span.textContent = `${k}: ${v}`;
+    meta.appendChild(span);
+  });
+
+  const img = document.getElementById("m_img");
+  const imgFile = imageFileStrategy(row);
+
+  if (!imgFile) {
+    img.removeAttribute("src");
+    document.getElementById("m_note").textContent =
+      "No image filename is attached for this entry (often because bar/beat is a range or the image is not present).";
+    modal.classList.add("open");
+    return;
+  }
+
+  const imgPath = imagesFolder + imgFile;
+  img.src = imgPath;
+  document.getElementById("m_note").textContent = `Image: ${imgPath}`;
+
+  img.onerror = () => {
+    img.removeAttribute("src");
+    document.getElementById("m_note").textContent =
+      `Could not load ${imgPath}. Check that the file exists in docs/images and that ImageFile matches exactly.`;
+  };
+
+  modal.classList.add("open");
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.remove("open");
+}
+
+async function init() {
+  const resp = await fetch("cadences.json");
+  allRows = await resp.json();
+
+  populateSelect("f_e", allRows.map(r => r["E Number"]));
+  populateSelect("f_comp", allRows.map(r => r["Composer"]));
+  populateSelect("f_type", allRows.map(r => r["CadType"]));
+  populateSelect("f_tone", allRows.map(r => r["Tone"]));
+  populateSelect("f_tex", allRows.map(r => r["Full or reduced texture"]));
+  populateSelect("f_meter", allRows.map(r => r["Triple or Duple"]));
+
+  table = new DataTable("#tbl", {
+    data: allRows.map(rowToTableRow),
+    columns: [
+      { data: "e" },
+      { data: "title" },
+      { data: "comp" },
+      { data: "bar" },
+      { data: "beat" },
+      { data: "type" },
+      { data: "tone" },
+      { data: "tex" },
+      { data: "meter" },
+      { data: "notes" },
+    ],
+    pageLength: 25,
+    order: [[0,"asc"], [3,"asc"], [4,"asc"]],
+  });
+
+  ["#f_e","#f_comp","#f_type","#f_tone","#f_tex","#f_meter"].forEach(id => $(id).on("change", applyFilters));
+  ["#f_flags","#f_title","#f_bar"].forEach(id => $(id).on("input", applyFilters));
+
+  document.getElementById("clear").addEventListener("click", () => {
+    $("#f_e,#f_comp,#f_type,#f_tone,#f_tex,#f_meter").val("");
+    $("#f_flags,#f_title,#f_bar").val("");
+    applyFilters();
+  });
+
+  $("#tbl tbody").on("click", "span.rowlink", function() {
+    const id = parseInt($(this).attr("data-id"), 10);
+    const row = allRows.find(r => r._id === id);
+    if (row) openModal(row);
+  });
+
+  document.getElementById("m_close").addEventListener("click", closeModal);
+  document.getElementById("modal").addEventListener("click", (e) => {
+    if (e.target.id === "modal") closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
+}
+
+init();
+</script>
+</body>
+</html>
