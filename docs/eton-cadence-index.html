@@ -15,7 +15,7 @@ body{
   margin: 18px;
 }
 h1{ margin:0 0 6px 0; font-size:22px; }
-.sub{ color:#444; margin:0 0 16px 0; }
+.sub{ color:#444; margin:0 0 16px 0; max-width: 980px; line-height:1.35; }
 
 .controls{
   display:grid;
@@ -49,6 +49,7 @@ h1{ margin:0 0 6px 0; font-size:22px; }
   display:none;
 }
 
+/* Modal */
 .modal{
   position:fixed;
   inset:0;
@@ -77,15 +78,26 @@ h1{ margin:0 0 6px 0; font-size:22px; }
   align-items:center;
   padding:12px 14px;
   border-bottom:1px solid #eee;
+  gap: 12px;
 }
+
 .modal-title{ font-weight:600; }
-.modal-close{
+.modal-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.modal-btn{
   border:0;
   background:#f2f2f2;
   border-radius:10px;
   padding:8px 10px;
   cursor:pointer;
+  user-select:none;
 }
+.modal-btn:active{ transform: translateY(1px); }
 
 .modal-body{
   padding:14px;
@@ -99,14 +111,17 @@ h1{ margin:0 0 6px 0; font-size:22px; }
   margin-bottom:10px;
 }
 
+/* Image wrapper */
 .imgwrap{
   background:#fafafa;
   border:1px solid #eee;
   border-radius:12px;
   padding:10px;
   max-height:75vh;
-  overflow:auto;              /* scroll if tall */
+  overflow:auto;              /* scroll if tall / if zoomed */
+  cursor: grab;
 }
+.imgwrap:active{ cursor: grabbing; }
 
 .imgwrap img{
   display:block;
@@ -115,6 +130,11 @@ h1{ margin:0 0 6px 0; font-size:22px; }
   max-height:75vh;
   object-fit:contain;         /* never crop */
   margin:0 auto;
+}
+
+/* Zoom transform */
+#m_img{
+  transform-origin: top center;
 }
 
 @media(max-width:900px){
@@ -126,17 +146,16 @@ h1{ margin:0 0 6px 0; font-size:22px; }
 <body>
 
 <h1>Eton Cadence Index</h1>
-<p class="sub">This database allows you to filter, sort, and click a cadence to view its notated exemplar where available. 
-  It does not contain all pieces in the Eton Choirbook, but instead a limtied selection. 
-  This database should be taken as an indicative exemplar of what would be possible if more of the corpus was digitally encoded.
-  It should also be noted that some of the musical examples feature a lot of blank white space. This is due to an issue with how the png files were collated.
-  As such, this Candence index is best viewed on PCs and devices with larger screens.
+<p class="sub">
+  A searchable index of selected cadential events from the Eton Choirbook. Use the filters below to narrow results.
+  To view a notated exemplar (when available), click the <strong>Bar / Beat</strong> entry for that row.
+  <br><span style="color:#666;">Note: this is a working index and is not intended as an exhaustive catalogue of all cadences in the manuscript.</span>
 </p>
 
 <div class="controls">
-  <div><label>E</label><select id="f_e"><option value="">All</option></select></div>
+  <div><label>Eton number</label><select id="f_e"><option value="">All</option></select></div>
   <div><label>Composer</label><select id="f_comp"><option value="">All</option></select></div>
-  <div><label>CadType</label><select id="f_type"><option value="">All</option></select></div>
+  <div><label>Cadence type</label><select id="f_type"><option value="">All</option></select></div>
   <div><label>Tone</label><select id="f_tone"><option value="">All</option></select></div>
   <div><label>Texture</label><select id="f_tex"><option value="">All</option></select></div>
   <div><label>Meter</label><select id="f_meter"><option value="">All</option></select></div>
@@ -145,9 +164,9 @@ h1{ margin:0 0 6px 0; font-size:22px; }
 </div>
 
 <div class="controls">
-  <div><label>Flags</label><input id="f_flags"></div>
-  <div><label>Title</label><input id="f_title"></div>
-  <div><label>Bar</label><input id="f_bar"></div>
+  <div><label>Marked features</label><input id="f_flags" placeholder="e.g. hangover, triplets"></div>
+  <div><label>Work title</label><input id="f_title" placeholder="e.g. Gaude virgo"></div>
+  <div><label>Bar number</label><input id="f_bar" placeholder="e.g. 10"></div>
   <div><label>&nbsp;</label><button id="clear">Clear</button></div>
 </div>
 
@@ -163,18 +182,28 @@ h1{ margin:0 0 6px 0; font-size:22px; }
 </table>
 
 <div id="modal" class="modal">
-  <div class="modal-card">
+  <div class="modal-card" id="modal_card">
     <div class="modal-head">
-      <div>
+      <div style="min-width: 260px;">
         <div class="modal-title" id="m_title"></div>
         <div id="m_sub" style="font-size:12px;color:#666;"></div>
       </div>
-      <button class="modal-close" id="m_close">Close</button>
+
+      <div class="modal-actions">
+        <button class="modal-btn" id="zoom_out" title="Zoom out">−</button>
+        <button class="modal-btn" id="zoom_reset" title="Reset zoom">Reset</button>
+        <button class="modal-btn" id="zoom_in" title="Zoom in">+</button>
+        <button class="modal-btn" id="m_close">Close</button>
+      </div>
     </div>
+
     <div class="modal-body">
       <div class="meta" id="m_meta"></div>
-      <div class="imgwrap">
+      <div class="imgwrap" id="imgwrap">
         <img id="m_img" alt="">
+      </div>
+      <div style="margin-top:8px; font-size:12px; color:#666;">
+        Tip: hold <strong>Ctrl</strong> and use the mouse wheel to zoom.
       </div>
     </div>
   </div>
@@ -183,6 +212,22 @@ h1{ margin:0 0 6px 0; font-size:22px; }
 <script>
 const imagesFolder = "images_cropped/";
 let allRows=[], table;
+
+/* Zoom state */
+let zoom = 1;
+const ZOOM_MIN = 0.5;
+const ZOOM_MAX = 4.0;
+const ZOOM_STEP = 0.2;
+
+function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+function applyZoom(){
+  const img = document.getElementById("m_img");
+  img.style.transform = `scale(${zoom})`;
+}
+function setZoom(z){
+  zoom = clamp(z, ZOOM_MIN, ZOOM_MAX);
+  applyZoom();
+}
 
 function esc(s){
   return String(s||"")
@@ -208,10 +253,8 @@ function notes(r){
 }
 
 function sortKey(bar, beat){
-  // Ensure correct numeric sort when Bar/Beat is a combined display column.
   const b = parseInt(bar ?? 0, 10) || 0;
   const bt = parseInt(beat ?? 0, 10) || 0;
-  // pad to fixed width: bar 000000, beat 0000
   return String(b).padStart(6,"0") + "-" + String(bt).padStart(4,"0");
 }
 
@@ -221,12 +264,10 @@ function row(r){
 
   return {
     e: r["E Number"],
-    title: esc(r.Title),  // Title is now plain text (not the click target)
+    title: esc(r.Title),  // plain text
     comp: r.Composer,
-
-    // Clickable link moved here + hidden numeric sort key so sorting works properly
+    // clickable link lives here + hidden numeric key for correct sorting
     barbeat: `<span class="sortkey">${key}</span><span class="rowlink" data-id="${r._id}">${esc(bbText)}</span>`,
-
     type: r.CadType,
     tone: r.Tone,
     tex: r["Full or reduced texture"],
@@ -274,7 +315,7 @@ function openModal(r){
   $("#m_title").text(`${r["E Number"]} — Bar ${r.Bar}, beat ${r.Beat}`);
   $("#m_sub").text(`${r.Title} (${r.Composer})`);
   $("#m_meta").html([
-    ["CadType",r.CadType],
+    ["Cadence type",r.CadType],
     ["Tone",r.Tone],
     ["Texture",r["Full or reduced texture"]],
     ["Meter",r["Triple or Duple"]],
@@ -284,7 +325,19 @@ function openModal(r){
 
   const img = r.ImageFile ? (imagesFolder + r.ImageFile) : "";
   $("#m_img").attr("src", img);
+
+  // reset zoom + scroll position each time
+  zoom = 1;
+  applyZoom();
+  const wrap = document.getElementById("imgwrap");
+  wrap.scrollTop = 0;
+  wrap.scrollLeft = 0;
+
   $("#modal").addClass("open");
+}
+
+function closeModal(){
+  $("#modal").removeClass("open");
 }
 
 async function init(){
@@ -309,7 +362,7 @@ async function init(){
   table = new DataTable("#tbl",{
     data: allRows.map(row),
     columns: ["e","title","comp","barbeat","type","tone","tex","meter","cvfs","cant","notes"].map(d=>({data:d})),
-    order: [[0,"asc"],[3,"asc"]],   // bar/beat column sorts correctly due to hidden key
+    order: [[0,"asc"],[3,"asc"]],
     pageLength: 25
   });
 
@@ -319,13 +372,39 @@ async function init(){
     apply();
   });
 
-  // click handler now targets the combined Bar/Beat link (still .rowlink)
   $("#tbl").on("click",".rowlink", e=>{
     openModal(allRows.find(r=>r._id == e.target.dataset.id));
   });
 
-  $("#m_close,#modal").on("click", e=>{
-    if(e.target.id !== "m_img") $("#modal").removeClass("open");
+  /* Modal close behaviour:
+     - Close button closes
+     - Clicking the dark overlay closes
+     - Clicking inside the modal card does NOT close */
+  $("#m_close").on("click", closeModal);
+  $("#modal").on("click", (e)=>{
+    if(e.target.id === "modal") closeModal();
+  });
+  $("#modal_card").on("click", (e)=> e.stopPropagation());
+
+  /* Zoom buttons */
+  $("#zoom_in").on("click", ()=> setZoom(zoom + ZOOM_STEP));
+  $("#zoom_out").on("click", ()=> setZoom(zoom - ZOOM_STEP));
+  $("#zoom_reset").on("click", ()=> setZoom(1));
+
+  /* Ctrl + wheel zoom inside the image area */
+  document.getElementById("imgwrap").addEventListener("wheel", (e)=>{
+    if(!document.getElementById("modal").classList.contains("open")) return;
+    if(!e.ctrlKey) return;
+    e.preventDefault();
+    const dir = (e.deltaY > 0) ? -1 : 1; // wheel up -> zoom in
+    setZoom(zoom + dir * 0.1);
+  }, { passive: false });
+
+  /* Optional: ESC closes modal */
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape" && document.getElementById("modal").classList.contains("open")){
+      closeModal();
+    }
   });
 }
 init();
