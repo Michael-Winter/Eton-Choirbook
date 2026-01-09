@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Eton Cadence Index</title>
+<title>Eton Cadence Thesaurus</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables.net-dt@2.1.8/css/dataTables.dataTables.min.css">
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
@@ -42,6 +42,11 @@ h1{ margin:0 0 6px 0; font-size:22px; }
   border-radius:999px;
   border:1px solid #ddd;
   font-size:12px;
+}
+
+/* Hidden sort values for Bar/Beat combined column */
+.sortkey{
+  display:none;
 }
 
 .modal{
@@ -120,10 +125,9 @@ h1{ margin:0 0 6px 0; font-size:22px; }
 
 <body>
 
-<h1>Eton Cadence Index</h1>
+<h1>Eton Cadence Thesaurus</h1>
 <p class="sub">Filter, sort, and click a cadence to view its notated exemplar where available.</p>
 
-<!-- Core categorical filters -->
 <div class="controls">
   <div><label>E</label><select id="f_e"><option value="">All</option></select></div>
   <div><label>Composer</label><select id="f_comp"><option value="">All</option></select></div>
@@ -135,40 +139,19 @@ h1{ margin:0 0 6px 0; font-size:22px; }
   <div><label>Cantizans</label><select id="f_cant"><option value="">All</option></select></div>
 </div>
 
-<!-- Text/number filters -->
 <div class="controls">
-  <div><label>Flags (free text)</label><input id="f_flags" placeholder="e.g. hangover"></div>
-  <div><label>Title</label><input id="f_title" placeholder="e.g. Gaude virgo"></div>
-  <div><label>Bar</label><input id="f_bar" placeholder="e.g. 120"></div>
+  <div><label>Flags</label><input id="f_flags"></div>
+  <div><label>Title</label><input id="f_title"></div>
+  <div><label>Bar</label><input id="f_bar"></div>
   <div><label>&nbsp;</label><button id="clear">Clear</button></div>
-</div>
-
-<!-- Flag dropdown filters -->
-<div class="controls">
-  <div><label>Triplets?</label>
-    <select id="f_trip"><option value="">All</option><option value="Y">Yes</option><option value="N">No</option></select>
-  </div>
-  <div><label>Section end?</label>
-    <select id="f_sec"><option value="">All</option><option value="Y">Yes</option><option value="N">No</option></select>
-  </div>
-  <div><label>Enjambment?</label>
-    <select id="f_enj"><option value="">All</option><option value="Y">Yes</option><option value="N">No</option></select>
-  </div>
-  <div><label>Hangover?</label>
-    <select id="f_hang"><option value="">All</option><option value="Y">Yes</option><option value="N">No</option></select>
-  </div>
-  <div><label>Eton 6th?</label>
-    <select id="f_6"><option value="">All</option><option value="Y">Yes</option><option value="N">No</option></select>
-  </div>
 </div>
 
 <table id="tbl" class="display" style="width:100%">
 <thead>
 <tr>
-  <th>E</th><th>Title</th><th>Composer</th><th>Bar</th><th>Beat</th>
-  <th>CadType</th><th>Tone</th><th>Texture</th><th>Meter</th>
-  <th>Triplets</th><th>Section end</th><th>Enjambment</th><th>Hangover</th><th>Eton 6th</th>
-  <th>CVFs</th><th>Cantizans</th><th>Notes</th>
+<th>E</th><th>Title</th><th>Composer</th><th>Bar / Beat</th>
+<th>CadType</th><th>Tone</th><th>Texture</th><th>Meter</th>
+<th>CVFs</th><th>Cantizans</th><th>Notes</th>
 </tr>
 </thead>
 <tbody></tbody>
@@ -194,33 +177,13 @@ h1{ margin:0 0 6px 0; font-size:22px; }
 
 <script>
 const imagesFolder = "images_cropped/";
-let allRows = [], table;
+let allRows=[], table;
 
 function esc(s){
   return String(s||"")
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
     .replaceAll(">","&gt;");
-}
-
-function yn(v){
-  return String(v||"").toUpperCase()==="Y" ? "Y" : "";
-}
-
-function ynMatch(v, want){ // want: "", "Y", "N"
-  const isY = String(v||"").toUpperCase()==="Y";
-  if(!want) return true;      // All
-  if(want==="Y") return isY;  // Yes
-  if(want==="N") return !isY; // No (includes blank/unmarked)
-  return true;
-}
-
-function sectionEndValue(r){
-  // Treat "Major Section End" as section end too
-  const isY =
-    String(r["Section end?"]||"").toUpperCase()==="Y" ||
-    String(r["Major Section End"]||"").toUpperCase()==="Y";
-  return isY ? "Y" : "";
 }
 
 function notes(r){
@@ -239,24 +202,30 @@ function notes(r){
     .join("; ");
 }
 
+function sortKey(bar, beat){
+  // Ensure correct numeric sort when Bar/Beat is a combined display column.
+  const b = parseInt(bar ?? 0, 10) || 0;
+  const bt = parseInt(beat ?? 0, 10) || 0;
+  // pad to fixed width: bar 000000, beat 0000
+  return String(b).padStart(6,"0") + "-" + String(bt).padStart(4,"0");
+}
+
 function row(r){
+  const bbText = `Bar ${r.Bar}, beat ${r.Beat}`;
+  const key = sortKey(r.Bar, r.Beat);
+
   return {
     e: r["E Number"],
-    title: `<span class="rowlink" data-id="${r._id}">${esc(r.Title)}</span>`,
+    title: esc(r.Title),  // Title is now plain text (not the click target)
     comp: r.Composer,
-    bar: r.Bar,
-    beat: r.Beat,
+
+    // Clickable link moved here + hidden numeric sort key so sorting works properly
+    barbeat: `<span class="sortkey">${key}</span><span class="rowlink" data-id="${r._id}">${esc(bbText)}</span>`,
+
     type: r.CadType,
     tone: r.Tone,
     tex: r["Full or reduced texture"],
     meter: r["Triple or Duple"],
-
-    trip: yn(r["Triplets?"]),
-    sec:  sectionEndValue(r),
-    enj:  yn(r["Enjambment?"]),
-    hang: yn(r["Hangover?"]),
-    six:  yn(r["Eton 6th?"]),
-
     cvfs: r.CVFs || "",
     cant: r.Cantizans || "",
     notes: notes(r)
@@ -264,7 +233,7 @@ function row(r){
 }
 
 function apply(){
-  const f = {
+  const f={
     e: $("#f_e").val(),
     c: $("#f_comp").val(),
     t: $("#f_type").val(),
@@ -275,13 +244,7 @@ function apply(){
     ca: $("#f_cant").val(),
     fl: $("#f_flags").val().toLowerCase(),
     ti: $("#f_title").val().toLowerCase(),
-    b: $("#f_bar").val(),
-
-    trip: $("#f_trip").val(),
-    sec:  $("#f_sec").val(),
-    enj:  $("#f_enj").val(),
-    hang: $("#f_hang").val(),
-    six:  $("#f_6").val()
+    b: $("#f_bar").val()
   };
 
   const rows = allRows.filter(r=>{
@@ -293,17 +256,9 @@ function apply(){
     if(f.m && r["Triple or Duple"] != f.m) return false;
     if(f.cv && String(r.CVFs||"") != f.cv) return false;
     if(f.ca && String(r.Cantizans||"") != f.ca) return false;
-
     if(f.ti && !String(r.Title||"").toLowerCase().includes(f.ti)) return false;
     if(f.b && String(r.Bar||"") != f.b) return false;
     if(f.fl && !notes(r).toLowerCase().includes(f.fl)) return false;
-
-    if(!ynMatch(r["Triplets?"], f.trip)) return false;
-    if(!ynMatch(sectionEndValue(r), f.sec)) return false;
-    if(!ynMatch(r["Enjambment?"], f.enj)) return false;
-    if(!ynMatch(r["Hangover?"], f.hang)) return false;
-    if(!ynMatch(r["Eton 6th?"], f.six)) return false;
-
     return true;
   });
 
@@ -311,18 +266,13 @@ function apply(){
 }
 
 function openModal(r){
-  $("#m_title").text(`${r["E Number"]} — bar ${r.Bar}, beat ${r.Beat}`);
+  $("#m_title").text(`${r["E Number"]} — Bar ${r.Bar}, beat ${r.Beat}`);
   $("#m_sub").text(`${r.Title} (${r.Composer})`);
   $("#m_meta").html([
     ["CadType",r.CadType],
     ["Tone",r.Tone],
     ["Texture",r["Full or reduced texture"]],
     ["Meter",r["Triple or Duple"]],
-    ["Triplets?",yn(r["Triplets?"])],
-    ["Section end?",sectionEndValue(r)],
-    ["Enjambment?",yn(r["Enjambment?"])],
-    ["Hangover?",yn(r["Hangover?"])],
-    ["Eton 6th?",yn(r["Eton 6th?"])],
     ["CVFs",r.CVFs],
     ["Cantizans",r.Cantizans]
   ].filter(x=>x[1]).map(x=>`<span class="pill">${x[0]}: ${x[1]}</span>`).join(""));
@@ -335,9 +285,8 @@ function openModal(r){
 async function init(){
   allRows = await (await fetch("cadences.json")).json();
 
-  // Populate dropdowns based on data
   ["f_e","f_comp","f_type","f_tone","f_tex","f_meter","f_cvfs","f_cant"].forEach(id=>{
-    const key = {
+    const key={
       f_e:"E Number",
       f_comp:"Composer",
       f_type:"CadType",
@@ -348,20 +297,14 @@ async function init(){
       f_cant:"Cantizans"
     }[id];
 
-    [...new Set(allRows.map(r=>r[key]).filter(x=>x!=="" && x!=null))]
-      .sort()
+    [...new Set(allRows.map(r=>r[key]).filter(x=>x!=="" && x!=null))].sort()
       .forEach(v=>$("#"+id).append(`<option>${v}</option>`));
   });
 
   table = new DataTable("#tbl",{
     data: allRows.map(row),
-    columns: [
-      "e","title","comp","bar","beat",
-      "type","tone","tex","meter",
-      "trip","sec","enj","hang","six",
-      "cvfs","cant","notes"
-    ].map(d=>({data:d})),
-    order: [[0,"asc"],[3,"asc"],[4,"asc"]],
+    columns: ["e","title","comp","barbeat","type","tone","tex","meter","cvfs","cant","notes"].map(d=>({data:d})),
+    order: [[0,"asc"],[3,"asc"]],   // bar/beat column sorts correctly due to hidden key
     pageLength: 25
   });
 
@@ -371,12 +314,13 @@ async function init(){
     apply();
   });
 
+  // click handler now targets the combined Bar/Beat link (still .rowlink)
   $("#tbl").on("click",".rowlink", e=>{
-    openModal(allRows.find(r=>r._id==e.target.dataset.id));
+    openModal(allRows.find(r=>r._id == e.target.dataset.id));
   });
 
   $("#m_close,#modal").on("click", e=>{
-    if(e.target.id!=="m_img") $("#modal").removeClass("open");
+    if(e.target.id !== "m_img") $("#modal").removeClass("open");
   });
 }
 init();
