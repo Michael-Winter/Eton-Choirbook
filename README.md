@@ -14,7 +14,7 @@ The digital appendix accompanies this thesis as evidence of a series of explorat
 #### Appendix E.1 Activity Plots Notebook
 This notebook generates activity plots used to visualise the distribution and density of musical events across selected works in the Eton repertory. These plots support comparative analysis of texture and formal articulation. They should be used as an exploratory analytical aid rather than as definitive statistical measures.
 
-HTML: https://michael-winter.github.io/Eton Choirbook/Activity_Map_Charts_Annotated%20(1).html 
+HTML: https://michael-winter.github.io/Eton-Choirbook/Activity_Map_Charts_Annotated%20(1).html 
 
 ipynb: https://github.com/Michael-Winter/Eton-Choirbook/blob/main/appendix/Activity_Map_Charts_Annotated%20(1).ipynb 
 
