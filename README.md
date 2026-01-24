@@ -18,6 +18,7 @@ This notebook generates activity plots used to visualise the distribution and de
 - ipynb: https://github.com/Michael-Winter/Eton-Choirbook/blob/main/appendix/Activity_Map_Charts_Annotated%20(1).ipynb 
 
 #### Appendix E.2 Sonority Notebook
+This annotated Jupyter notebook accompanies the analytical discussion of sonority and harmony in Chapter 2 of the thesis. It documents the computational procedures used to extract, classify, and quantify vertical sonorities in a corpus of works from the Eton Choirbook, encoded in machine‑readable format (MusicXML)
 
 #### Appendix E.3 Eton Reconstruction Aid
 Appendix E.3 provides two linked resources: an HTML interface and the underlying Jupyter Notebook. The Jupyter Notebook was used to support the reconstruction of E74 discussed in Chapter 4.3.
