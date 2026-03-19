@@ -1,1 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Appendix D: Comparison Edition of Browne’s Magnificat</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://www.verovio.org/javascript/latest/verovio-toolkit-wasm.js"></script>
+</head>
 
+<body>
+  <header>
+    <h1>Appendix D: Comparison Edition of Browne’s Magnificat</h1>
+    <p>
+      Scroll horizontally through the main score. Hover over a highlighted bar and click to view the related passage.
+    </p>
+  </header>
+
+  <section class="instructions" aria-label="How to use this edition">
+    <h3>Using this edition</h3>
+    <p>
+      This appendix presents an interactive comparison edition of Browne’s <em>Magnificat</em>. Hover over a highlighted
+      bar in the main score and click to display related passages from other works in the repertory.
+    </p>
+    <p>
+      The main score can be navigated horizontally to view the full 32-bar excerpt.
+    </p>
+  </section>
+
+  <main class="layout">
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Main score</h2>
+        <p>Browne, Magnificat</p>
+      </div>
+
+      <div class="toolbar">
+        <button id="clearSelection">Clear selection</button>
+        <span class="toolbar-spacer"></span>
+        <span id="statusText" class="status">Loading score…</span>
+      </div>
+
+      <div class="score-wrap">
+        <div class="score-stage">
+          <div class="score-shell" id="scoreShell">
+            <div id="verovioContainer" class="verovio-container"></div>
+            <div id="overlayLayer" class="overlay-layer"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="debug-panel is-hidden">
+        <h3>Debug</h3>
+        <div id="debugSummary">Waiting…</div>
+        <pre id="debugLog"></pre>
+      </div>
+    </section>
+
+    <aside class="panel detail">
+      <div class="panel-header">
+        <h2>Comparison passage</h2>
+        <p id="comparisonHeaderText">Select a highlighted bar.</p>
+      </div>
+
+      <div class="detail-body">
+        <div class="detail-meta" id="detailMeta">
+          <p><strong>Main work:</strong> Browne, Magnificat</p>
+          <p><strong>Selected bar:</strong> None</p>
+          <p><strong>Related work:</strong> None</p>
+          <p><strong>Bars:</strong> —</p>
+        </div>
+
+        <div class="comparison-stage">
+          <div id="comparisonContainer" class="placeholder comparison-container">
+            Select a highlighted bar to load the related example.
+          </div>
+        </div>
+
+        <p class="caption" id="comparisonCaption"></p>
+      </div>
+    </aside>
+  </main>
+
+  <script src="js/links.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
