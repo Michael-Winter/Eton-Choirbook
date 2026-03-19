@@ -13,6 +13,8 @@ The digital appendix accompanies this thesis as evidence of a series of explorat
 ### Appendix D
 This appendix presents an interactive comparison edition of Browne’s Magnificat. Hover over a highlighted bar in the main score and click to display related passages from other works in the repertory.
 
+E74 Digital Score: https://michael-winter.github.io/Eton-Choirbook/E74-digital-edition.html
+
 ### Appendix E
 A series of Jupytr notebooks used in the analytical and reconstruction work in this thesis.
 
