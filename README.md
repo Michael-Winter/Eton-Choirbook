@@ -16,7 +16,7 @@ This appendix presents an interactive comparison edition of Browne’s Magnifica
 E74 Digital Score: https://michael-winter.github.io/Eton-Choirbook/E74-digital-edition.html
 
 ### Appendix E
-A series of Jupytr notebooks used in the analytical and reconstruction work in this thesis.
+A series of Jupyter notebooks used in the analytical and reconstruction work in this thesis.
 
 #### Appendix E.1 Activity Plots Notebook
 This notebook generates activity plots used to visualise the distribution and density of musical events across selected works in the Eton repertory. These plots support comparative analysis of texture and formal articulation. They should be used as an exploratory analytical aid rather than as definitive statistical measures.
