@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://music-encoding.org/schema/dev/mei-all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="https://music-encoding.org/schema/dev/mei-all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="6.0-dev">
+   <meiHead xml:id="mb3em8a">
+      <fileDesc xml:id="f6acbgh">
+         <titleStmt xml:id="t1e9yw58">
+            <title>O Mater Venerabilis</title>
+            <respStmt>
+               <persName role="composer">John Browne</persName>
+            </respStmt>
+         </titleStmt>
+         <pubStmt xml:id="p5pwwhp">
+            <date isodate="2026-03-16" type="encoding-date">2026-03-16</date>
+         </pubStmt>
+      </fileDesc>
+      <encodingDesc xml:id="ektcouq">
+         <appInfo xml:id="a1hn5egu">
+            <application xml:id="a1y3q34w" isodate="2026-03-16T18:45:50" version="6.1.0-682d606">
+               <name xml:id="nftclnl">Verovio</name>
+               <p xml:id="pv8bnj">Transcoded from MusicXML</p>
+            </application>
+         </appInfo>
+      </encodingDesc>
+   </meiHead>
+   <music>
+      <body>
+         <mdiv xml:id="cc4umgc">
+            <score xml:id="dfk71a5">
+               <scoreDef xml:id="e10gzzdx">
+                  <pgFoot xml:id="iqyefuz">
+                     <rend xml:id="g5gso50" halign="center" valign="middle" fontstyle="normal" fontweight="normal">O Mater Venerabilis</rend>
+                     <rend xml:id="j1635suv" halign="right" valign="middle" fontstyle="normal" fontweight="normal">John Browne</rend>
+                  </pgFoot>
+                  <staffGrp xml:id="l1xc4ifd">
+                     <staffGrp xml:id="m3frj89">
+                        <grpSym xml:id="nb0yj70" symbol="bracket" />
+                        <staffDef xml:id="P1" n="1" lines="5" ppq="256">
+                           <label xml:id="otac8kz">Treble</label>
+                           <labelAbbr xml:id="q185j71d">Tr.</labelAbbr>
+                           <clef xml:id="aqp7a5b" shape="G" color="#000000" line="2" />
+                           <keySig xml:id="b1bakvmg" mode="minor" sig="1f" />
+                           <meterSig xml:id="c6au5gx" count="4" unit="1" />
+                        </staffDef>
+                        <staffDef xml:id="P2" n="2" lines="5" ppq="256" trans.diat="-7" trans.semi="-12">
+                           <label xml:id="qds4ghs">Mean</label>
+                           <labelAbbr xml:id="s1yamvxj">M.</labelAbbr>
+                           <clef xml:id="c17c5k1h" shape="G" color="#000000" line="2" dis="8" dis.place="below" />
+                           <keySig xml:id="d1n9hdu9" mode="minor" sig="1f" />
+                           <meterSig xml:id="e930n7q" count="4" unit="1" />
+                        </staffDef>
+                        <staffDef xml:id="P3" n="3" lines="5" ppq="256" trans.diat="-7" trans.semi="-12">
+                           <label xml:id="m920q1a">Contratenor</label>
+                           <labelAbbr xml:id="onuohzf">Ct.</labelAbbr>
+                           <clef xml:id="ypwcemd" shape="G" color="#000000" line="2" dis="8" dis.place="below" />
+                           <keySig xml:id="z8i6kom" mode="minor" sig="1f" />
+                           <meterSig xml:id="a1myp1v7" count="4" unit="1" />
+                        </staffDef>
+                        <staffDef xml:id="P4" n="4" lines="5" ppq="256">
+                           <label xml:id="yc8jklh">Tenor</label>
+                           <labelAbbr xml:id="a5hz0gh">T.</labelAbbr>
+                           <clef xml:id="kvg6vde" shape="F" color="#000000" line="4" />
+                           <keySig xml:id="l1i97x1n" mode="minor" sig="1f" />
+                           <meterSig xml:id="mfj1jzt" count="4" unit="1" />
+                        </staffDef>
+                        <staffDef xml:id="P5" n="5" lines="5" ppq="256">
+                           <label xml:id="jg8n8mj">Bassus</label>
+                           <labelAbbr xml:id="l184paq">B.</labelAbbr>
+                           <clef xml:id="vbnikiv" shape="F" color="#000000" line="4" />
+                           <keySig xml:id="wkylu69" mode="minor" sig="1f" />
+                           <meterSig xml:id="x171eu0v" count="4" unit="1" />
+                        </staffDef>
+                     </staffGrp>
+                  </staffGrp>
+               </scoreDef>
+               <section xml:id="f1ifl912">
+                  <expansion plist="#k1kw8tjj" xml:id="l1ae9hqj" />
+                  <pb xml:id="ns7ueyj" />
+                  <section xml:id="k1kw8tjj">
+                     <measure xml:id="dxdex3x" n="1">
+                        <staff xml:id="mt9d65u" n="1">
+                           <layer xml:id="o1ddhejf" n="1">
+                              <rest xml:id="pnccbzp" dur.ppq="4096" dur="1" />
+                           </layer>
+                        </staff>
+                        <staff xml:id="o19jj4bv" n="2">
+                           <layer xml:id="ptakpoz" n="1">
+                              <note xml:id="q1nfanuc" dur.ppq="1024" dur="1" oct="4" pname="d" color="#000000">
+                                 <accid xml:id="r1qf470n" />
+                                 <verse xml:id="s1ve8r6y" color="#000000" n="1">
+                                    <syl xml:id="t1i9zg37" con="d" wordpos="i">si</syl>
+                                 </verse>
+                              </note>
+                              <note xml:id="vti9b4j" dur.ppq="512" dur="2" oct="4" pname="e" color="#000000" stem.dir="down">
+                                 <accid xml:id="w1sgek4a" />
+                              </note>
+                              <note xml:id="x1z6m9h" dur.ppq="512" dur="2" oct="4" pname="c" color="#000000" stem.dir="down">
+                                 <accid xml:id="ya8ndyy" />
+                                 <verse xml:id="zvaw6y0" color="#000000" n="1">
+                                    <syl xml:id="a1xsc2xe" con="d" wordpos="m">ti</syl>
+                                 </verse>
+                              </note>
+                              <note xml:id="c1tdf3z7" dur.ppq="256" dur="4" oct="4" pname="d" color="#000000" stem.dir="down">
+                                 <accid xml:id="dl44n0t" />
+                              </note>
+                              <note xml:id="e4oqixe" dur.ppq="256" dur="4" oct="4" pname="c" color="#000000" stem.dir="down">
+                                 <accid xml:id="faqitng" />
+                              </note>
+                              <note xml:id="g1jupyid" dur.ppq="256" dur="4" oct="3" pname="b" color="#000000" stem.dir="down">
+                                 <accid xml:id="h7k10y9" accid.ges="f" glyph.auth="smufl" glyph.name="accidentalFlat" />
+                              </note>
+                              <note xml:id="ip7mapc" dur.ppq="256" dur="4" oct="3" pname="a" color="#000000" stem.dir="up">
+                                 <accid xml:id="j1a9m3ac" />
+                              </note>
+                              <note xml:id="k1viwsdt" dur.ppq="1024" dur="1" oct="3" pname="b" color="#000000">
+                                 <accid xml:id="l13a469k" accid.ges="f" glyph.auth="smufl" glyph.name="accidentalFlat" />
+                              </note>
+                           </layer>
+                        </staff>
+                        <staff xml:id="k68i2jv" n="3">
+                           <layer xml:id="l15pgkxm" n="1">
+                              <note xml:id="myypey6" dur.ppq="1024" dur="1" oct="3" pname="b" color="#000000">
+                                 <accid xml:id="n1bhxckh" accid.ges="f" glyph.auth="smufl" glyph.name="accidentalFlat" />
+                                 <verse xml:id="o1bny0pk" color="#000000" n="1">
+                                    <syl xml:id="p13kx5m0" con="d" wordpos="i">ti</syl>
+                                 </verse>
+                              </note>
+                              <note xml:id="r1szod22" dur.ppq="1024" dur="1" oct="4" pname="c" color="#000000">
+                                 <accid xml:id="s8zqlio" />
+                              </note>
+                              <note xml:id="taysn9c" dur.ppq="1024" dur="1" oct="3" pname="a" color="#000000">
+                                 <accid xml:id="uv49zlj" />
+                              </note>
+                              <note xml:id="vxv4y96" dur.ppq="1024" dur="1" oct="4" pname="d" color="#000000">
+                                 <accid xml:id="w18mstfg" />
+                              </note>
+                           </layer>
+                        </staff>
+                        <staff xml:id="w1icjtjo" n="4">
+                           <layer xml:id="xtqb96j" n="1">
+                              <note xml:id="y1ik73e9" dur.ppq="1024" dur="1" oct="3" pname="g" color="#000000">
+                                 <accid xml:id="z5kbhti" />
+                              </note>
+                              <note xml:id="ahweyrb" dur.ppq="1024" dur="1" oct="3" pname="c" color="#000000">
+                                 <accid xml:id="b16ck4ln" />
+                                 <verse xml:id="cisghmk" color="#000000" n="1">
+                                    <syl xml:id="d159gfhm" con="d" wordpos="i">ti</syl>
+                                 </verse>
+                              </note>
+                              <note xml:id="fa5tuft" dur.ppq="1024" dur="1" oct="3" pname="f" color="#000000">
+                                 <accid xml:id="g1ro71za" />
+                              </note>
+                              <note xml:id="h2y1op5" dur.ppq="1024" dur="1" oct="3" pname="g" color="#000000">
+                                 <accid xml:id="i1ljnj65" />
+                              </note>
+                           </layer>
+                        </staff>
+                        <staff xml:id="h11xquxa" n="5">
+                           <layer xml:id="ijrdqck" n="1">
+                              <rest xml:id="j1gdwib0" dur.ppq="4096" dur="1" />
+                           </layer>
+                        </staff>
+                        <tie xml:id="x1e8hsgl" startid="#vxv4y96" curvedir="above" />
+                     </measure>
+                  </section>
+               </section>
+            </score>
+         </mdiv>
+      </body>
+   </music>
+</mei>
