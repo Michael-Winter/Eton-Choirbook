@@ -82,7 +82,7 @@ function clearSelection() {
   currentComparisonLink = null;
 
   detailMeta.innerHTML = `
-    <p><strong>Main work:</strong> Browne, Magnificat</p>
+    <p><strong>Main work:</strong> Browne, Magnificat (E74)</p>
     <p><strong>Selected bar:</strong> None</p>
     <p><strong>Related work:</strong> None</p>
     <p><strong>Bars:</strong> —</p>
