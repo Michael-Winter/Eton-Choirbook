@@ -8,8 +8,13 @@ Please do get in touch if you spot any errors or would like a tranposition of an
 m.winter@ncl.ac.uk
 
 ## Thesis Appendix
-### Appendix E
 The digital appendix accompanies this thesis as evidence of a series of exploratory analytical tools, datasets, and workflows developed during the project. These materials are not intended to function as definitive analytical models. Instead, they document the practical implementation of the methods discussed in the thesis, make aspects of the analytical process transparent, and support the reproducibility of selected observations.
+
+### Appendix D
+This appendix presents an interactive comparison edition of Browne’s Magnificat. Hover over a highlighted bar in the main score and click to display related passages from other works in the repertory.
+
+### Appendix E
+A series of Jupytr notebooks used in the analytical and reconstruction work in this thesis.
 
 #### Appendix E.1 Activity Plots Notebook
 This notebook generates activity plots used to visualise the distribution and density of musical events across selected works in the Eton repertory. These plots support comparative analysis of texture and formal articulation. They should be used as an exploratory analytical aid rather than as definitive statistical measures.
