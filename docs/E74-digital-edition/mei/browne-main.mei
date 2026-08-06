@@ -331,9 +331,10 @@
                               <note xml:id="w7yhogn" dur.ppq="512" dur="2" oct="4" pname="g" color="#000000" cue="true" stem.dir="up">
                                  <accid xml:id="x1e9zv0r" />
                               </note>
-                              <note xml:id="y1gmin0h" dur.ppq="1024" dur="1" oct="4" pname="a" color="#000000" cue="true">
+                              <note xml:id="y1gmin0h" dur.ppq="1024" dur="2" oct="4" pname="a" color="#000000" cue="true">
                                  <accid xml:id="zstup7i" />
                               </note>
+                              <rest xml:id="n1v3x7ra" dur.ppq="512" dur="2" cue="true" />
                               <note xml:id="a1elam0r" dur.ppq="512" dur="2" oct="4" pname="g" color="#000000" cue="true" stem.dir="up">
                                  <accid xml:id="b12t3t6z" />
                               </note>
