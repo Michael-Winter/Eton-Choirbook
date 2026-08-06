@@ -169,7 +169,7 @@
                                     <syl xml:id="la8ifi" con="d" wordpos="m">sul</syl>
                                  </verse>
                               </note>
-                              <note xml:id="nq2p4qp" dur.ppq="1024" dur="1" oct="4" pname="g" color="#000000" cue="true">
+                              <note xml:id="nq2p4qp" dur.ppq="1024" dur="1" oct="4" pname="e" color="#000000" cue="true">
                                  <accid xml:id="o15c43go" />
                                  <verse xml:id="po38ys7" color="#000000" n="1">
                                     <syl xml:id="q59x3j2" con="d" wordpos="m">ta</syl>
